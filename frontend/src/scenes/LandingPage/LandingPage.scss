@@ -1,0 +1,139 @@
+@import '../../assets/styles/utils.scss';
+
+.top {
+    .form-group {
+        width: 75%;
+        @media only screen and (max-width: 575px) {
+            width: 100% !important;
+        }
+        select {
+            font-size: 1.5rem;
+            height: auto !important;
+        }
+    }
+}
+
+hr {
+    border-top: 1px solid rgba(0,0,0,.05);
+    margin-top: .9rem;
+}
+
+.boxes {
+    justify-content: space-between;
+    align-items: center;
+    .box {
+        border: solid 1px #eee;
+        transition: all .3s ease-in-out;
+        background-color: $white;
+        box-shadow: 0px 3px 10px #eee;
+        padding: 3rem;
+
+        &:hover {
+            transform: scale(1.06);
+            box-shadow: 0px 5px 10px #eee;
+        }
+        .box-1 {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            
+            h4 {
+                font-size: 1.7rem;
+                @media only screen and (max-width: 1238px) {
+                    font-size: 1.55rem;
+                }
+            }
+
+            svg {
+                font-size: 1.8rem;
+                path {
+                    fill: $maincolor;
+                }
+            }
+        }
+
+        h3 {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+    }
+}
+
+.leadlist {
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f5f8fa;
+        &:hover {
+            background-color: #ecf2f7;
+            cursor: pointer;
+        }
+    }
+
+    table {
+        tr {
+            &:hover:not(:first-child) {
+                background-color: #ecf2f7;
+                cursor: pointer;
+            }
+        }
+    }
+
+    .button {
+        font-size: 1rem !important;
+        padding: .7rem 1.5rem !important;
+        text-decoration: none;
+        &:hover {
+            color: white;
+        }
+    }
+}
+
+.chart > div {
+    height: 50rem !important;
+    border: solid 1px #ecf2f7;
+    background-color: $white;
+    display: flex;
+    justify-content: center;
+}
+
+.tooltip-inner {
+    font-size: 1.4rem !important;
+}
+
+/* Dropdown Button */
+.dropbtn {
+    color: $maincolor;
+    font-size: 1.6rem;
+    border: none;
+  }
+  
+  /* The container <div> - needed to position the dropdown content */
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  /* Dropdown Content (Hidden by Default) */
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    left: -30px;
+    background-color: $white;
+    min-width: 80px;
+    z-index: 10;
+    box-shadow: 0px 5px 10px #ecf2f7;
+
+    a {
+        color: black;
+        padding: 8px 12px;
+        text-decoration: none;
+        display: block;
+        font-size: 1.4rem !important;
+        z-index: 10;
+      }
+  }
+  
+  /* Change color of dropdown links on hover */
+  .dropdown-content a:hover {background-color: #ecf2f7;}
+  
+  /* Show the dropdown menu on hover */
+  .dropdown:hover .dropdown-content {display: block;}

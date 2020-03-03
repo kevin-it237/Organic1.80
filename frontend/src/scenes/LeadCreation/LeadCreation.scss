@@ -1,0 +1,101 @@
+
+@import '../../assets/styles/utils.scss';
+
+.add__lead {
+    form {
+        width: 100% !important;
+        margin-top: 2.5rem;
+
+        .form-bloc {
+            background-color: white;
+            padding: 3rem;
+            border: solid 1px #eee;
+
+            textarea {
+                font-size: 1.4rem;
+            }
+
+            label, span {
+                font-size: 1.2rem;
+            }
+
+            
+            .nav-tabs a:hover{ border-bottom: none !important;}
+        }
+
+        .moreinfos {
+            .button {
+                font-size: 1rem;
+                margin-top: .5rem;
+                padding: .5rem 1rem;
+                margin-left: auto;
+                cursor: pointer;
+            }
+        }
+    }
+
+    .single {
+        padding: 1.5rem 2rem;
+        border: solid 1px rgb(223, 223, 223);
+        justify-content: space-between;
+        &:not(:first-child) {
+            margin-top: 1rem;
+        }
+
+        p {
+            font-size: 1.5rem;
+            margin-right: 1.5rem;
+            margin-bottom: 0;
+            @media only screen and (max-width: 800px) {
+                font-size: 1.3rem;
+            }
+        }
+
+        svg {
+            font-size: 1.8rem;
+            @media only screen and (max-width: 800px) {
+                font-size: 1.6rem;
+            }
+            path {
+                fill: $maincolor;
+            }
+        }
+    }
+
+    .lead-creation {
+        textarea {
+            font-size: 1.5rem !important;
+        }
+        .button {
+            margin-top: .6rem;
+        }
+        .box {
+            background-color: white;
+            padding: 1rem 1.8rem;
+            border: solid 1px #eee;
+            justify-content: space-between;
+            transition: scale 0.2s ease-in-out;
+            height: 5rem;
+            &:hover {
+                transform: none;
+            }
+
+            select {
+                font-size: 1.25rem;
+                height: 3rem;
+            }
+    
+            h4 {
+                margin-bottom: 0 !important;
+            }
+
+            .badge {
+                font-size: 1.6rem;
+            }
+        }
+    }
+
+    #engagement__rate {
+        width: 70px !important;
+    }
+}

@@ -1,0 +1,20 @@
+@import '../../assets/styles/utils.scss';
+
+#create__lead {
+    text-transform: none !important;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    svg {
+        font-size: 1.5rem !important;
+        margin-right: .8rem;
+    }
+}
+
+.pagination {
+    .page-link{
+        font-size: 1.5rem !important;
+        color: $maincolor;
+    }
+}

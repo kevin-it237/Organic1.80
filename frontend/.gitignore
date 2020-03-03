@@ -1,0 +1,43 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/backend/node_modules
+/frontend/node_modules
+/backend/uploads/videos/*
+/backend/uploads/eventsimages/*
+/backend/uploads/servicesimages/*
+/backend/uploads/suppliersImages/*
+/backend/uploads/usersImages/*
+/backend/uploads/gallery/*
+/backend/uploads/banner/*
+
+!backend/uploads/videos/.gitkeep
+!backend/uploads/eventsimages/.gitkeep
+!backend/uploads/servicesimages/.gitkeep
+!backend/uploads/suppliersImages/.gitkeep
+!backend/uploads/usersImages/.gitkeep
+!backend/uploads/gallery/.gitkeep
+!backend/uploads/banner/.gitkeep
+
+
+node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+frontend/build
+backend/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
