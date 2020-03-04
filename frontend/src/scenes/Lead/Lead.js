@@ -58,7 +58,7 @@ class Lead extends React.Component {
                                         <th>Shares</th>
                                         <th>Private Chats</th>
                                         <th>Appointments</th>
-                                        <th>Conversion Rate</th>
+                                        <th>Engagement Rate</th>
                                         <th>#</th>
                                     </tr>
                                 </thead>

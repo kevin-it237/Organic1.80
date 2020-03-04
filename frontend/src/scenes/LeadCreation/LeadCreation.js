@@ -43,7 +43,12 @@ class LeadCreation extends React.Component {
             addingAppointment: false,
             addingShare: false,
             addingChat: false,
-        }
+        },
+
+        singleComment: {body: "", link: "", isTyping: false},
+        singleAppointment: {body: "", link: "", isTyping: false},
+        singleSharedLink: {body: "", link: "", isTyping: false},
+        singleChat: {body: "", link: "", isTyping: false},
     }
 
     componentDidMount() {
@@ -72,14 +77,16 @@ class LeadCreation extends React.Component {
         })
     }
 
+    // Get form values on state
     handleInputChange = (e) => {
         e.preventDefault();
         const name = e.target.name;
-        const value = e.target.value;
+        const value = e.target.value.trim();
         this.setState({[name]: value}, 
             () => { this.validateField(name, value) });
     }
 
+    // Validate email field. Params: fieldName and field value
     validateField(fieldName, value) {
         let fieldValidationErrors = this.state.formErrors;
         let emailValid = this.state.emailValid;
@@ -107,7 +114,8 @@ class LeadCreation extends React.Component {
                         nameValid: nameValid
                       }, this.validateForm);
     }
-      
+    
+    // Verify if form is valid
     validateForm() {
         this.setState({formValid: this.state.emailValid && this.state.nameValid});
     }
@@ -173,11 +181,105 @@ class LeadCreation extends React.Component {
         }
     }
 
-    render() {
-        const {name, email, facebookAccount, instagramAccount, tel, website, status, qualification_status, isTyping, nameValid, emailValid, error,
-            observation, tags, engagement_rate, likes, comments, appointments, chat_links, share_links, loading, created_at} = this.state;
-        const { statsLoading, infosLoading, addingComment, addingAppointment, addingShare, addingChat } = this.state.loader;
+    // Get form values for comment, appointment, chat and shares from state
+    handleInputChangeInfos = (e) => {
+        e.preventDefault();
+        const name = e.target.name;
+        const id = e.target.id;
+        const value = e.target.value.trim();
+        this.setState({[name]: {...this.state[name], [id]: value, "isTyping": true}});
+    }
 
+
+    // submit comments, appointments, shares lik, chat on backend
+    submit = (data, type, loader ) => { // Take data to send, type and filed name
+        // Send request to update the lead
+        axios.patch('/api/lead/'+ type +'/add/' + this.state.leadId, {data: data})
+        .then(response => {
+            // Clear Notification/fields and update the view with the new data
+            this.setState({
+                loader: {...this.state.loader, [loader]: false}, 
+                singleComment: {body: "", link: "", isTyping: false},
+                singleAppointment: {body: "", link: "", isTyping: false},
+                singleSharedLink: {body: "", link: "", isTyping: false},
+                singleChat: {body: "", link: "", isTyping: false},
+                error: "", 
+            })
+            // Display success Notification
+            addNotification('success', 'Lead', type +' successfully added.')
+        })
+        .catch(err => {
+            // Display Failed Notification
+            addNotification('danger', 'Lead', 'Error when adding new' + type)
+            // Clear loader and display error
+            this.setState({loader: {...this.state.loader, [loader]: false}, error: "An error occured. Please try again."})
+        })
+    }
+
+    // Submit comments, appointments, shares lik, chat
+    handleSubmitOtherInfos = (e, type) => {
+        e.preventDefault();
+        let { singleComment, singleAppointment, singleSharedLink, singleChat } = this.state;
+        switch(type) {
+            case 'comment':
+                if(singleComment.body.length !== 0) {
+                    // Render loader
+                    this.setState({
+                        loader: {...this.state.loader, "addingComment": true}, 
+                        singleComment: {...singleComment, "isTyping": false},
+                        comments: [singleComment, ...this.state.comments]
+                    });
+                    // Handle request
+                    this.submit(singleComment, type, "addingComment");
+                }
+                break;
+            case 'appointment':
+                if(singleAppointment.body.length !== 0) {
+                    // Render loader
+                    this.setState({
+                        loader: {...this.state.loader, "addingAppointment": true}, 
+                        singleAppointment: {...singleAppointment, "isTyping": false,
+                        appointments: [singleAppointment, ...this.state.appointments]
+                    }});
+                    // Handle request
+                    this.submit(singleAppointment, type, "addingAppointment");
+                }
+                break;
+            case 'share':
+                if(singleSharedLink.body.length !== 0) {
+                    // Render loader
+                    this.setState({
+                        loader: {...this.state.loader, "addingShare": true}, 
+                        singleSharedLink: {...singleSharedLink, "isTyping": false},
+                        share_links: [singleSharedLink.body, ...this.state.share_links]
+                    });
+                    // Handle request
+                    this.submit(singleSharedLink.body, type, "addingShare");
+                }
+                break;
+            case 'chat':
+                if(singleChat.body.length !== 0) {
+                    // Render loader
+                    this.setState({
+                        loader: {...this.state.loader, "addingChat": true }, 
+                        singleChat: {...singleChat, "isTyping": false},
+                        chat_links: [singleChat.body, ...this.state.chat_links]
+                    });
+                    // Handle request
+                    this.submit(singleChat.body, type, "addingChat");
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    render() {
+        const { name, email, facebookAccount, instagramAccount, tel, website, status, qualification_status, isTyping, nameValid, emailValid, error,
+            observation, tags, engagement_rate, likes, comments, appointments, chat_links, share_links, loading, created_at } = this.state;
+        const { singleComment, singleAppointment, singleSharedLink, singleChat } = this.state;
+        const { statsLoading, infosLoading, addingComment, addingAppointment, addingShare, addingChat } = this.state.loader;
+        
         return (
             <section>
                 {loading ? <BigLoader /> :
@@ -186,7 +288,7 @@ class LeadCreation extends React.Component {
                         <div className="col-sm-12"><h5>Date: <DateFormat date={created_at} /></h5></div>
                         <div className="col-sm-12 col-md-4">
                             <div className="d-flex flex-row align-items-center box">
-                                <h4 className="font-weight-bold text-uppercase mr-3 flex-1">Engagement Rate:</h4>
+                                <h4 className="font-weight-bold text-uppercase mr-3 flex-1">Conversion Rate:</h4>
                                 <div className="d-flex align-items-center">
                                     <input id="engagement__rate" name="engagement_rate" onChange={(e) => this.handleInputChange(e)} type="number" value={engagement_rate} className="form-control" /><h3 className="ml-1 mb-0">%</h3>
                                 </div>
@@ -296,38 +398,42 @@ class LeadCreation extends React.Component {
                                 <div className="col-sm-12 col-md-6">
                                     <div className="form-group">
                                         <label>Add a new comment</label>
-                                        <textarea placeholder="Enter a new comment" className="form-control" rows="3"></textarea>
-                                        <input type="text" className="form-control" id="commentlink" aria-describedby="emailHelp" placeholder="Enter Link to the comment" />
+                                        <textarea value={singleComment.body} onChange={(e) => this.handleInputChangeInfos(e)} name="singleComment" id="body" placeholder="Enter a new comment" className="form-control" rows="3"></textarea>
+                                        {singleComment.isTyping&&singleComment.body.length === 0 ? <div style={{color: "red"}}>This field must not be empty.</div>:null}
+                                        <input value={singleComment.link} name="singleComment" id="link" onChange={(e) => this.handleInputChangeInfos(e)} type="text" className="form-control" placeholder="Enter Link to the comment" />
                                         <div className="d-flex justify-content-end">
-                                            <button className="button">Add</button>
+                                            <button disabled={addingComment} onClick={(e) => this.handleSubmitOtherInfos(e, "comment")} className="button">{addingComment ? <Loader />: "Add"}</button>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="col-sm-12 col-md-6">
                                     <div className="form-group">
                                         <label>Add a new Appointment</label>
-                                        <textarea placeholder="Enter Appointment details" className="form-control" rows="3"></textarea>
-                                        <input type="text" className="form-control" id="appointmentlink" aria-describedby="emailHelp" placeholder="Enter Link to the Appointment if available" />
+                                        <textarea  value={singleAppointment.body} onChange={(e) => this.handleInputChangeInfos(e)} name="singleAppointment" id="body" placeholder="Enter Appointment details" className="form-control" rows="3"></textarea>
+                                        {singleAppointment.isTyping&&singleAppointment.body.length === 0 ? <div style={{color: "red"}}>This field must not be empty.</div>:null}
+                                        <input value={singleAppointment.link} name="singleAppointment" onChange={(e) => this.handleInputChangeInfos(e)} id="link" type="text" className="form-control" placeholder="Enter Link to the Appointment if available" />
                                         <div className="d-flex justify-content-end">
-                                            <button className="button">Add</button>
+                                            <button disabled={addingAppointment} onClick={(e) => this.handleSubmitOtherInfos(e, "appointment")} className="button">{addingAppointment ? <Loader />: "Add"}</button>
                                         </div>
                                     </div>
                                 </div> 
                                 <div className="col-sm-12 col-md-6">
                                     <div className="form-group">
                                         <label>Add a Private Chat Link Or Chat Platform</label>
-                                        <textarea placeholder="Paste Private Chat Link or Chat Platform name" className="form-control"  rows="3"></textarea>
+                                        <textarea value={singleChat.body} name="singleChat" id="body" onChange={(e) => this.handleInputChangeInfos(e)} placeholder="Paste Private Chat Link or Chat Platform name" className="form-control"  rows="3"></textarea>
+                                        {singleChat.isTyping&&singleChat.body.length === 0 ? <div style={{color: "red"}}>This field must not be empty.</div>:null}
                                         <div className="d-flex justify-content-end">
-                                            <button className="button">Add</button>
+                                            <button disabled={addingChat} onClick={(e) => this.handleSubmitOtherInfos(e, "chat")} className="button">{addingChat ? <Loader />: "Add"}</button>
                                         </div>
                                     </div>
                                 </div> 
                                 <div className="col-sm-12 col-md-6">
                                     <div className="form-group">
                                         <label>Add a Shared Link</label>
-                                        <textarea placeholder="Paste the Shared link" className="form-control"  rows="3"></textarea>
+                                        <textarea value={singleSharedLink.body} name="singleSharedLink" id="body" onChange={(e) => this.handleInputChangeInfos(e)} placeholder="Paste the Shared link" className="form-control"  rows="3"></textarea>
+                                        {singleSharedLink.isTyping&&singleSharedLink.body.length === 0 ? <div style={{color: "red"}}>This field must not be empty.</div>:null}
                                         <div className="d-flex justify-content-end">
-                                            <button className="button">Add</button>
+                                            <button disabled={addingShare} onClick={(e) => this.handleSubmitOtherInfos(e, "share")} className="button">{addingShare ? <Loader />: "Add"}</button>
                                         </div>
                                     </div>
                                 </div>
@@ -356,7 +462,7 @@ class LeadCreation extends React.Component {
                                             {comments.map(comment => (
                                                 <div className="single d-flex">
                                                     <p>{comment.body}</p>
-                                                    <a href={comment.link}><FaExternalLinkAlt /></a>
+                                                    <a href={comment.link} target="_blank"><FaExternalLinkAlt /></a>
                                                 </div>
                                             ))}
                                         </div>
@@ -364,15 +470,15 @@ class LeadCreation extends React.Component {
                                             {appointments.map(appointment => (
                                                 <div className="single d-flex">
                                                     <p>{appointment.body}</p>
-                                                    <a href={appointment.link}><FaExternalLinkAlt /></a>
+                                                    <a href={appointment.link} target="_blank"><FaExternalLinkAlt /></a>
                                                 </div>
                                             ))}
                                         </div>
                                         <div className="tab-pane fade pt-5" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-                                            {chat_links.map(share => (
+                                            {chat_links.map(chat => (
                                                 <div className="single d-flex">
-                                                    <p>{share}</p>
-                                                    {share.includes("https") &&<a href={share}><FaExternalLinkAlt /></a>}
+                                                    <p>{chat}</p>
+                                                    {chat.includes("http") &&<a href={chat} target="_blank"><FaExternalLinkAlt /></a>}
                                                 </div>
                                             ))}
                                         </div>
@@ -380,7 +486,7 @@ class LeadCreation extends React.Component {
                                             {share_links.map(share => (
                                                 <div className="single d-flex">
                                                     <p>{share}</p>
-                                                    {share.includes("https") &&<a href={share}><FaExternalLinkAlt /></a>}
+                                                    {share.includes("http") &&<a href={share} target="_blank"><FaExternalLinkAlt /></a>}
                                                 </div>
                                             ))}
                                         </div>
